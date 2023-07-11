@@ -4,15 +4,29 @@ import java.util.ArrayList;
 
 public class Epic extends Task {
 
-    ArrayList<Integer> subtaskIDs;
+    private ArrayList<Integer> subtaskIdList;
 
     public Epic(String name, String description) {
         super(name, description);
-        this.subtaskIDs = new ArrayList<>();
+        this.subtaskIdList = new ArrayList<>();
     }
 
     public ArrayList<Integer> getSubtaskIdList() {
-        return subtaskIDs;
+        return subtaskIdList;
     }
 
+    public void setSubtaskIdList(ArrayList<Integer> subtaskIds) {
+        this.subtaskIdList = subtaskIds;
+    }
+
+    @Override
+    public String toString() {
+        return "Epic{" +
+                "subtaskIdList=" + subtaskIdList +
+                ", id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", status=" + status +
+                '}';
+    }
 }

@@ -1,6 +1,7 @@
 import managers.Manager;
 
 import model.Epic;
+import model.Status;
 import model.Subtask;
 import model.Task;
 
@@ -40,7 +41,7 @@ public class Main {
 
         Task modifiedTask1 = taskManager.getTaskById(task1.getId());
         System.out.println(modifiedTask1);
-        modifiedTask1.setStatus("IN_PROGRESS");
+        modifiedTask1.setStatus(Status.IN_PROGRESS);
         taskManager.updateTask(modifiedTask1);
         System.out.println(taskManager.getTaskById(task1.getId()));
         System.out.println("\n");
@@ -49,7 +50,7 @@ public class Main {
         System.out.println(taskManager.getEpicById(epic1.getId()));
         Subtask modifiedSubtask11 = taskManager.getSubtaskById(subtask11.getId());
         System.out.println(modifiedSubtask11);
-        modifiedSubtask11.setStatus("DONE");
+        modifiedSubtask11.setStatus(Status.DONE);
         taskManager.updateSubtask(modifiedSubtask11);
         System.out.println(taskManager.getSubtaskById(subtask11.getId()));
         System.out.println(taskManager.getEpicById(epic1.getId()));
@@ -57,7 +58,7 @@ public class Main {
 
         System.out.println(taskManager.getEpicById(epic2.getId()));
         Subtask modifiedSubtask21 = taskManager.getSubtaskById(subtask21.getId());
-        modifiedSubtask21.setStatus("DONE");
+        modifiedSubtask21.setStatus(Status.DONE);
         taskManager.updateSubtask(modifiedSubtask21);
         System.out.println(taskManager.getEpicById(epic2.getId()));
         System.out.println("\n");

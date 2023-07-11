@@ -5,14 +5,14 @@ import java.util.Objects;
 public class Task {
 
     protected Integer id;
-    String name;
-    String description;
-    protected String status; // NEW, IN_PROGRESS, DONE;
+    protected String name;
+    protected String description;
+    protected Status status;
 
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
-        this.status = "NEW";
+        this.status = Status.NEW;
     }
 
     public Integer getId() {
@@ -39,11 +39,11 @@ public class Task {
         this.description = description;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -62,7 +62,10 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return Objects.equals(name, task.name) && Objects.equals(description, task.description) && Objects.equals(id, task.id) && Objects.equals(status, task.status);
+        return Objects.equals(id, task.id)
+                && Objects.equals(description, task.description)
+                && Objects.equals(name, task.name)
+                && Objects.equals(status, task.status);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package managers;
 
+import model.Status;
 import model.Task;
 import model.Subtask;
 import model.Epic;
@@ -13,13 +14,11 @@ public class Manager {
     HashMap<Integer, Subtask> subtaskStorage = new HashMap<>();
     HashMap<Integer, Epic> epicStorage = new HashMap<>();
 
-    //<editor-fold desc="метод-идентификатор задач">
-    private int taskCounter = 0;
 
+    private int taskCounter = 0;
     private Integer generateId() {
         return ++taskCounter;
     }
-    //</editor-fold>
 
     //<editor-fold desc="методы для Task">
     public ArrayList<Task> getAllTasks() {
@@ -143,7 +142,7 @@ public class Manager {
         int id = generateId();
         subtask.setId(id);
         subtaskStorage.put(id, subtask);
-        getEpicById(subtask.epicId).getSubtaskIdList().add(subtask.getId());
+        getEpicById(subtask.getEpicId()).getSubtaskIdList().add(subtask.getId());
         return subtask;
     }
 
@@ -158,7 +157,7 @@ public class Manager {
             return null;
         }
             subtaskStorage.put(subtask.getId(), subtask);
-            updateEpicStatus(subtask.epicId);
+            updateEpicStatus(subtask.getEpicId());
             return subtask;
     }
 
@@ -168,12 +167,11 @@ public class Manager {
             System.out.println("нет такой подзадачи");
             return;
         }
-        getEpicById(subtask.epicId).getSubtaskIdList().remove(subtask.getId());
+        getEpicById(subtask.getEpicId()).getSubtaskIdList().remove(subtask.getId());
         subtaskStorage.remove(id);
-        updateEpicStatus(subtask.epicId);
+        updateEpicStatus(subtask.getEpicId());
     }
     //</editor-fold>
-
 
     public void updateEpicStatus(int epicId) {
 
@@ -182,21 +180,21 @@ public class Manager {
 
         for (Integer id : epicStorage.get(epicId).getSubtaskIdList()) {
             switch (subtaskStorage.get(id).getStatus()) {
-                case "NEW":
+                case NEW:
                     newCounter++;
                     break;
-                case "DONE":
+                case DONE:
                     doneCounter++;
                     break;
             }
         }
 
         if (newCounter == epicStorage.get(epicId).getSubtaskIdList().size()) {
-            epicStorage.get(epicId).setStatus("NEW");
+            epicStorage.get(epicId).setStatus(Status.NEW);
         } else if (doneCounter == epicStorage.get(epicId).getSubtaskIdList().size()) {
-            epicStorage.get(epicId).setStatus("DONE");
+            epicStorage.get(epicId).setStatus(Status.DONE);
         } else {
-            epicStorage.get(epicId).setStatus("IN_PROGRESS");
+            epicStorage.get(epicId).setStatus(Status.IN_PROGRESS);
         }
     }
 
