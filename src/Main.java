@@ -11,26 +11,32 @@ public class Main {
 
         Manager taskManager = new Manager();
 
-        Task task1 = new Task("имя задачи1", "описание задачи1");
-        Task task2 = new Task("имя задачи2", "описание задачи2");
+        String task1Name = "имя задачи1";
+        String task1Description = "описание задачи1";
+        String task2Name = "имя задачи2";
+        String task2Description = "описание задачи2";
 
-        Epic epic1 = new Epic("Переезд","мы справимся!");
-        Subtask subtask11 = new Subtask("Собрать коробки", "на балконе тоже", 3);
-        Subtask subtask12 = new Subtask("Упаковать кошку", "спрячется под кровать", 3);
+        Task task1 = taskManager.createTask(task1Name, task1Description);
+        Task task2 = taskManager.createTask(task2Name, task2Description);
 
-        Epic epic2 = new Epic("Сдать фз3","отправить ревьюеру");
-        Subtask subtask21 = new Subtask("Дописать main", "для первичного теста", 4);
+        String epic1Name = "Переезд";
+        String epic1Description = "мы справимся!";
+        String epic2Name = "Сдать фз3";
+        String epic2Description = "отправить ревьюеру";
 
-        task1 = taskManager.createTask(task1);
-        task2 = taskManager.createTask(task2);
+        String subtask11Name = "Собрать коробки";
+        String subtask11Description = "на балконе тоже";
+        String subtask12Name = "Упаковать кошку";
+        String subtask12Description = "спрячется под кровать";
+        String subtask21Name = "Дописать main";
+        String subtask21Description = "для первичного теста";
 
-        epic1 = taskManager.createEpic(epic1);
-        epic2 = taskManager.createEpic(epic2);
+        Epic epic1 = taskManager.createEpic(epic1Name, epic1Description);
+        Epic epic2 = taskManager.createEpic(epic2Name, epic2Description);
 
-        subtask11 = taskManager.createSubtask(subtask11);
-        subtask12 = taskManager.createSubtask(subtask12);
-        subtask21 = taskManager.createSubtask(subtask21);
-
+        Subtask subtask11 = taskManager.createSubtask(subtask11Name, subtask11Description, epic1.getId());
+        Subtask subtask12 = taskManager.createSubtask(subtask12Name, subtask12Description, epic1.getId());
+        Subtask subtask21 = taskManager.createSubtask(subtask21Name, subtask21Description, epic2.getId());
 
         System.out.println(" ");
         System.out.println("задачи: " + taskManager.getAllTasks());
@@ -39,27 +45,29 @@ public class Main {
         System.out.println("\n");
 
 
-        Task modifiedTask1 = taskManager.getTaskById(task1.getId());
-        System.out.println(modifiedTask1);
-        modifiedTask1.setStatus(Status.IN_PROGRESS);
-        taskManager.updateTask(modifiedTask1);
+        System.out.println(taskManager.getTaskById(task1.getId()));
+
+        taskManager.updateTask(Status.IN_PROGRESS, task1.getId());
+        taskManager.updateTask("новое имя задачи1", "", task1.getId());
+
         System.out.println(taskManager.getTaskById(task1.getId()));
         System.out.println("\n");
 
 
         System.out.println(taskManager.getEpicById(epic1.getId()));
-        Subtask modifiedSubtask11 = taskManager.getSubtaskById(subtask11.getId());
-        System.out.println(modifiedSubtask11);
-        modifiedSubtask11.setStatus(Status.DONE);
-        taskManager.updateSubtask(modifiedSubtask11);
+        System.out.println(taskManager.getSubtaskById(subtask11.getId()));
+
+        taskManager.updateSubtask(Status.DONE, subtask11.getId());
+
         System.out.println(taskManager.getSubtaskById(subtask11.getId()));
         System.out.println(taskManager.getEpicById(epic1.getId()));
         System.out.println("\n");
 
+
         System.out.println(taskManager.getEpicById(epic2.getId()));
-        Subtask modifiedSubtask21 = taskManager.getSubtaskById(subtask21.getId());
-        modifiedSubtask21.setStatus(Status.DONE);
-        taskManager.updateSubtask(modifiedSubtask21);
+
+        taskManager.updateSubtask(Status.DONE, subtask21.getId());
+
         System.out.println(taskManager.getEpicById(epic2.getId()));
         System.out.println("\n");
 

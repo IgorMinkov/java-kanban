@@ -7,6 +7,7 @@ import model.Epic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class Manager {
 
@@ -33,29 +34,41 @@ public class Manager {
         return taskStorage.get(id);
     }
 
-    public Task createTask(Task task) {
-        if (task.getName() == null) {
-            System.out.println("пустое имя задачи");
+    public Task createTask(String name, String description) {
+        if (name == null) {
+            System.out.println("не задано имя задачи");
             return null;
         }
+        Task task = new Task(name, description);
         int id = generateId();
         task.setId(id);
         taskStorage.put(id, task);
         return task;
     }
 
-    public Task updateTask(Task task) {
-        if (task == null || task.getId() == null ) {
+    public Task updateTask(Status status, Integer id) {
+        Task modifiedTask = getTaskById(id);
+        if (modifiedTask == null) {
             System.out.println("нет такой задачи");
             return null;
         }
-        Task oldTask = taskStorage.get(task.getId());
-        if (oldTask == null) {
-            System.out.println("нет такой задачи");
+        modifiedTask.setStatus(status);
+        return taskStorage.put(modifiedTask.getId(), modifiedTask);
+    }
+
+    public Task updateTask(String name, String description, Integer id) {
+        Task modifiedTask = getTaskById(id);
+        if (modifiedTask == null) {
+            System.out.println("нет такого эпика");
             return null;
         }
-        taskStorage.put(task.getId(), task);
-        return task;
+        if (!Objects.equals(name, "")) {
+            modifiedTask.setName(name);
+        }
+        if (!Objects.equals(description, "")) {
+            modifiedTask.setDescription(description);
+        }
+        return taskStorage.put(modifiedTask.getId(), modifiedTask);
     }
 
     public void deleteTaskById(int id) {
@@ -82,29 +95,31 @@ public class Manager {
         return epicStorage.get(id);
     }
 
-    public Epic createEpic(Epic epic) {
-        if (epic.getName() == null) {
-            System.out.println("пустое имя эпика");
+    public Epic createEpic(String name, String description) {
+        if (name == null) {
+            System.out.println("не задано имя эпика");
             return null;
         }
+        Epic epic = new Epic(name, description);
         int id = generateId();
         epic.setId(id);
         epicStorage.put(id, epic);
         return epic;
     }
 
-    public Epic updateEpic(Epic epic) {
-        if (epic == null || epic.getId() == null ) {
+    public Epic updateEpic(String name, String description, Integer id) {
+        Epic modifiedEpic = getEpicById(id);
+        if (modifiedEpic == null) {
             System.out.println("нет такого эпика");
             return null;
         }
-        Epic oldEpic = epicStorage.get(epic.getId());
-        if (oldEpic == null) {
-            System.out.println("нет такого эпика");
-            return null;
+        if (!Objects.equals(name, " ")) {
+            modifiedEpic.setName(name);
         }
-            epicStorage.put(epic.getId(), epic);
-        return epic;
+        if (!Objects.equals(description, " ")) {
+            modifiedEpic.setDescription(description);
+        }
+        return epicStorage.put(modifiedEpic.getId(), modifiedEpic);
     }
 
     public void deleteEpicById(int id) {
@@ -134,11 +149,16 @@ public class Manager {
         return subtaskStorage.get(id);
     }
 
-    public Subtask createSubtask(Subtask subtask) {
-        if (subtask.getName() == null) {
-            System.out.println("пустое имя подзадачи");
+    public Subtask createSubtask(String name, String description, Integer epicId) {
+        if (name == null) {
+            System.out.println("не задано имя подзадачи");
             return null;
         }
+        if (epicId == null) {
+            System.out.println("не найден эпик для подзадачи");
+            return null;
+        }
+        Subtask subtask = new Subtask(name, description, epicId);
         int id = generateId();
         subtask.setId(id);
         subtaskStorage.put(id, subtask);
@@ -146,19 +166,30 @@ public class Manager {
         return subtask;
     }
 
-    public Subtask updateSubtask(Subtask subtask) {
-        if (subtask == null || subtask.getId() == null ) {
+    public Subtask updateSubtask(Status status, Integer id) {
+        Subtask modifiedSubtask = getSubtaskById(id);
+        if (modifiedSubtask == null) {
             System.out.println("нет такой подзадачи");
             return null;
         }
-        Task oldTask = subtaskStorage.get(subtask.getId());
-        if (oldTask == null) {
-            System.out.println("нет такой подзадачи");
+        modifiedSubtask.setStatus(status);
+        updateEpicStatus(modifiedSubtask.getEpicId());
+        return subtaskStorage.put(modifiedSubtask.getId(), modifiedSubtask);
+    }
+
+    public Subtask updateSubtask(String name, String description, Integer id) {
+        Subtask modifiedSubtask = getSubtaskById(id);
+        if (modifiedSubtask == null) {
+            System.out.println("нет такого эпика");
             return null;
         }
-            subtaskStorage.put(subtask.getId(), subtask);
-            updateEpicStatus(subtask.getEpicId());
-            return subtask;
+        if (!Objects.equals(name, "")) {
+            modifiedSubtask.setName(name);
+        }
+        if (!Objects.equals(description, "")) {
+            modifiedSubtask.setDescription(description);
+        }
+        return subtaskStorage.put(modifiedSubtask.getId(), modifiedSubtask);
     }
 
     public void deleteSubtaskById(int id) {
