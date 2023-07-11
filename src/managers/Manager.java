@@ -11,17 +11,15 @@ import java.util.Objects;
 
 public class Manager {
 
-    HashMap<Integer, Task> taskStorage = new HashMap<>();
-    HashMap<Integer, Subtask> subtaskStorage = new HashMap<>();
-    HashMap<Integer, Epic> epicStorage = new HashMap<>();
-
-
+    private HashMap<Integer, Task> taskStorage = new HashMap<>();
+    private HashMap<Integer, Subtask> subtaskStorage = new HashMap<>();
+    private HashMap<Integer, Epic> epicStorage = new HashMap<>();
     private int taskCounter = 0;
+
     private Integer generateId() {
         return ++taskCounter;
     }
 
-    //<editor-fold desc="методы для Task">
     public ArrayList<Task> getAllTasks() {
         return new ArrayList<>(taskStorage.values());
     }
@@ -79,9 +77,7 @@ public class Manager {
         }
         taskStorage.remove(id);
     }
-    //</editor-fold>
 
-    //<editor-fold desc="методы для Epic">
     public ArrayList<Epic> getAllEpics() {
         return new ArrayList<>(epicStorage.values());
     }
@@ -134,9 +130,7 @@ public class Manager {
         epicStorage.get(id).getSubtaskIdList().clear();
         epicStorage.remove(id);
     }
-    //</editor-fold>
 
-    //<editor-fold desc="методы для Subtask">
     public ArrayList<Subtask> getAllSubtask() {
         return new ArrayList<>(subtaskStorage.values());
     }
@@ -202,17 +196,20 @@ public class Manager {
         subtaskStorage.remove(id);
         updateEpicStatus(subtask.getEpicId());
     }
-    //</editor-fold>
 
     public void updateEpicStatus(int epicId) {
 
         int newCounter = 0;
         int doneCounter = 0;
+        int inProgressCounter = 0;
 
         for (Integer id : epicStorage.get(epicId).getSubtaskIdList()) {
             switch (subtaskStorage.get(id).getStatus()) {
                 case NEW:
                     newCounter++;
+                    break;
+                case IN_PROGRESS:
+                    inProgressCounter++;
                     break;
                 case DONE:
                     doneCounter++;
