@@ -5,33 +5,40 @@ import model.Task;
 import model.Subtask;
 import model.Epic;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Objects;
 
-public class Manager {
+public class InMemoryTaskManager implements TaskManager {
 
     private HashMap<Integer, Task> taskStorage = new HashMap<>();
     private HashMap<Integer, Subtask> subtaskStorage = new HashMap<>();
     private HashMap<Integer, Epic> epicStorage = new HashMap<>();
     private int taskCounter = 0;
 
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
+
     private Integer generateId() {
         return ++taskCounter;
     }
 
+    @Override
     public ArrayList<Task> getAllTasks() {
         return new ArrayList<>(taskStorage.values());
     }
 
+    @Override
     public void deleteAllTasks() {
         taskStorage.clear();
     }
 
+    @Override
     public Task getTaskById(int id) {
+        historyManager.addTask(taskStorage.get(id));
         return taskStorage.get(id);
     }
 
+    @Override
     public Task createTask(String name, String description) {
         if (name == null) {
             System.out.println("не задано имя задачи");
@@ -44,6 +51,7 @@ public class Manager {
         return task;
     }
 
+    @Override
     public Task updateTask(Status status, Integer id) {
         Task modifiedTask = getTaskById(id);
         if (modifiedTask == null) {
@@ -54,6 +62,7 @@ public class Manager {
         return taskStorage.put(modifiedTask.getId(), modifiedTask);
     }
 
+    @Override
     public Task updateTask(String name, String description, Integer id) {
         Task modifiedTask = getTaskById(id);
         if (modifiedTask == null) {
@@ -69,6 +78,7 @@ public class Manager {
         return taskStorage.put(modifiedTask.getId(), modifiedTask);
     }
 
+    @Override
     public void deleteTaskById(int id) {
         Task task = taskStorage.get(id);
         if (task == null) {
@@ -78,19 +88,24 @@ public class Manager {
         taskStorage.remove(id);
     }
 
+    @Override
     public ArrayList<Epic> getAllEpics() {
         return new ArrayList<>(epicStorage.values());
     }
 
+    @Override
     public void deleteAllEpics() {
         epicStorage.clear();
         subtaskStorage.clear();
     }
 
+    @Override
     public Epic getEpicById(int id) {
+        historyManager.addTask(epicStorage.get(id));
         return epicStorage.get(id);
     }
 
+    @Override
     public Epic createEpic(String name, String description) {
         if (name == null) {
             System.out.println("не задано имя эпика");
@@ -103,6 +118,7 @@ public class Manager {
         return epic;
     }
 
+    @Override
     public Epic updateEpic(String name, String description, Integer id) {
         Epic modifiedEpic = getEpicById(id);
         if (modifiedEpic == null) {
@@ -118,6 +134,7 @@ public class Manager {
         return epicStorage.put(modifiedEpic.getId(), modifiedEpic);
     }
 
+    @Override
     public void deleteEpicById(int id) {
         Epic epic = epicStorage.get(id);
         if (epic == null) {
@@ -131,18 +148,23 @@ public class Manager {
         epicStorage.remove(id);
     }
 
+    @Override
     public ArrayList<Subtask> getAllSubtask() {
         return new ArrayList<>(subtaskStorage.values());
     }
 
+    @Override
     public void deleteAllSubtask() {
         subtaskStorage.clear();
     }
 
+    @Override
     public Subtask getSubtaskById(int id) {
+        historyManager.addTask(subtaskStorage.get(id));
         return subtaskStorage.get(id);
     }
 
+    @Override
     public Subtask createSubtask(String name, String description, Integer epicId) {
         if (name == null) {
             System.out.println("не задано имя подзадачи");
@@ -160,6 +182,7 @@ public class Manager {
         return subtask;
     }
 
+    @Override
     public Subtask updateSubtask(Status status, Integer id) {
         Subtask modifiedSubtask = getSubtaskById(id);
         if (modifiedSubtask == null) {
@@ -171,6 +194,7 @@ public class Manager {
         return subtaskStorage.put(modifiedSubtask.getId(), modifiedSubtask);
     }
 
+    @Override
     public Subtask updateSubtask(String name, String description, Integer id) {
         Subtask modifiedSubtask = getSubtaskById(id);
         if (modifiedSubtask == null) {
@@ -186,6 +210,7 @@ public class Manager {
         return subtaskStorage.put(modifiedSubtask.getId(), modifiedSubtask);
     }
 
+    @Override
     public void deleteSubtaskById(int id) {
         Subtask subtask = subtaskStorage.get(id);
         if (subtask == null) {
@@ -195,6 +220,11 @@ public class Manager {
         getEpicById(subtask.getEpicId()).getSubtaskIdList().remove(subtask.getId());
         subtaskStorage.remove(id);
         updateEpicStatus(subtask.getEpicId());
+    }
+
+    @Override
+    public HistoryManager getHistoryManager() {
+        return historyManager;
     }
 
     public void updateEpicStatus(int epicId) {
@@ -216,7 +246,6 @@ public class Manager {
                     break;
             }
         }
-
         if (newCounter == epicStorage.get(epicId).getSubtaskIdList().size()) {
             epicStorage.get(epicId).setStatus(Status.NEW);
         } else if (doneCounter == epicStorage.get(epicId).getSubtaskIdList().size()) {

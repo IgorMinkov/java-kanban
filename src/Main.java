@@ -1,5 +1,5 @@
-import managers.Manager;
-
+import managers.Managers;
+import managers.TaskManager;
 import model.Epic;
 import model.Status;
 import model.Subtask;
@@ -9,7 +9,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Manager taskManager = new Manager();
+        TaskManager taskManager = Managers.getDefault();
 
         String task1Name = "имя задачи1";
         String task1Description = "описание задачи1";
@@ -34,9 +34,16 @@ public class Main {
         Epic epic1 = taskManager.createEpic(epic1Name, epic1Description);
         Epic epic2 = taskManager.createEpic(epic2Name, epic2Description);
 
+        System.out.println("история просмотра1:" + taskManager.getHistoryManager().getHistory());
+        System.out.println(" ");
+
         Subtask subtask11 = taskManager.createSubtask(subtask11Name, subtask11Description, epic1.getId());
         Subtask subtask12 = taskManager.createSubtask(subtask12Name, subtask12Description, epic1.getId());
         Subtask subtask21 = taskManager.createSubtask(subtask21Name, subtask21Description, epic2.getId());
+
+        System.out.println("история просмотра2:");
+        taskManager.getHistoryManager().getHistory().forEach(x -> System.out.println(x.toString()));
+        System.out.println("\n");
 
         System.out.println(" ");
         System.out.println("задачи: " + taskManager.getAllTasks());
@@ -47,10 +54,20 @@ public class Main {
 
         System.out.println(taskManager.getTaskById(task1.getId()));
 
+        System.out.println(" ");
+        System.out.println("история просмотра3:");
+        taskManager.getHistoryManager().getHistory().forEach(x -> System.out.println(x.toString()));
+        System.out.println("\n");
+
         taskManager.updateTask(Status.IN_PROGRESS, task1.getId());
         taskManager.updateTask("новое имя задачи1", "", task1.getId());
 
         System.out.println(taskManager.getTaskById(task1.getId()));
+        System.out.println("\n");
+
+
+        System.out.println("история просмотра4:");
+        taskManager.getHistoryManager().getHistory().forEach(x -> System.out.println(x.toString()));
         System.out.println("\n");
 
 
@@ -82,6 +99,10 @@ public class Main {
 
         taskManager.deleteTaskById(task2.getId());
         System.out.println(taskManager.getAllTasks());
+
+        System.out.println("\n");
+        System.out.println("история просмотра5:");
+        taskManager.getHistoryManager().getHistory().forEach(x -> System.out.println(x.toString()));
     }
 
 }
