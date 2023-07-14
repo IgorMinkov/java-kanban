@@ -7,13 +7,14 @@ import model.Epic;
 
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    private HashMap<Integer, Task> taskStorage = new HashMap<>();
-    private HashMap<Integer, Subtask> subtaskStorage = new HashMap<>();
-    private HashMap<Integer, Epic> epicStorage = new HashMap<>();
+    private Map<Integer, Task> taskStorage = new HashMap<>();
+    private Map<Integer, Subtask> subtaskStorage = new HashMap<>();
+    private Map<Integer, Epic> epicStorage = new HashMap<>();
     private int taskCounter = 0;
 
     private final HistoryManager historyManager = Managers.getDefaultHistory();
@@ -34,8 +35,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTaskById(int id) {
-        historyManager.addTask(taskStorage.get(id));
-        return taskStorage.get(id);
+        Task task = taskStorage.get(id);
+        historyManager.addTask(task);
+        return task;
     }
 
     @Override
@@ -101,8 +103,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Epic getEpicById(int id) {
-        historyManager.addTask(epicStorage.get(id));
-        return epicStorage.get(id);
+        Epic epic = epicStorage.get(id);
+        historyManager.addTask(epic);
+        return epic;
     }
 
     @Override
@@ -160,8 +163,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Subtask getSubtaskById(int id) {
-        historyManager.addTask(subtaskStorage.get(id));
-        return subtaskStorage.get(id);
+        Subtask subtask = subtaskStorage.get(id);
+        historyManager.addTask(subtask);
+        return subtask;
     }
 
     @Override

@@ -3,7 +3,6 @@ package managers;
 import model.Task;
 
 import java.util.LinkedList;
-import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
@@ -23,7 +22,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public List<Task> getHistory() {
+    public LinkedList<Task> getHistory() {
         return taskViewHistory;
     }
 

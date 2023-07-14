@@ -1,15 +1,15 @@
 package managers;
 
 import model.Epic;
-import model.Status;
 import model.Subtask;
 import model.Task;
+import model.Status;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface TaskManager {
 
-    ArrayList<Task> getAllTasks();
+    List<Task> getAllTasks();
 
     void deleteAllTasks();
 
@@ -23,7 +23,7 @@ public interface TaskManager {
 
     void deleteTaskById(int id);
 
-    ArrayList<Epic> getAllEpics();
+    List<Epic> getAllEpics();
 
     void deleteAllEpics();
 
@@ -35,7 +35,7 @@ public interface TaskManager {
 
     void deleteEpicById(int id);
 
-    ArrayList<Subtask> getAllSubtask();
+    List<Subtask> getAllSubtask();
 
     void deleteAllSubtask();
 
