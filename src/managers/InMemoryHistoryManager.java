@@ -50,7 +50,6 @@ public class InMemoryHistoryManager implements HistoryManager {
     private List<Task> getTasks() {
         List<Task> numberedTasks = new ArrayList<>();
         if (head == null) {
-            System.out.println("Пустая история просмотров");
             return numberedTasks;
         }
         Node currentNode = head;

@@ -12,12 +12,12 @@ import java.util.Objects;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    private Map<Integer, Task> taskStorage = new HashMap<>();
-    private Map<Integer, Subtask> subtaskStorage = new HashMap<>();
-    private Map<Integer, Epic> epicStorage = new HashMap<>();
-    private int taskCounter = 0;
+    protected Map<Integer, Task> taskStorage = new HashMap<>();
+    protected Map<Integer, Subtask> subtaskStorage = new HashMap<>();
+    protected Map<Integer, Epic> epicStorage = new HashMap<>();
+    protected int taskCounter = 0;
 
-    private final HistoryManager historyManager = Managers.getDefaultHistory();
+    protected final HistoryManager historyManager = Managers.getDefaultHistory();
 
     private Integer generateId() {
         return ++taskCounter;
@@ -251,15 +251,11 @@ public class InMemoryTaskManager implements TaskManager {
 
         int newCounter = 0;
         int doneCounter = 0;
-        int inProgressCounter = 0;
 
         for (Integer id : epicStorage.get(epicId).getSubtaskIdList()) {
             switch (subtaskStorage.get(id).getStatus()) {
                 case NEW:
                     newCounter++;
-                    break;
-                case IN_PROGRESS:
-                    inProgressCounter++;
                     break;
                 case DONE:
                     doneCounter++;
