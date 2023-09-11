@@ -5,6 +5,7 @@ import model.Subtask;
 import model.Task;
 
 import java.io.File;
+import java.time.LocalDateTime;
 
 public class Main {
 
@@ -12,37 +13,32 @@ public class Main {
 
         File file = new File("./resources/BackupFile.csv");
 
+        LocalDateTime now = LocalDateTime.now();
+
         FileBackedTasksManager manager = new FileBackedTasksManager(file);
 
-        String task1Name = "имя задачи1";
-        String task1Description = "описание задачи1";
-        String task2Name = "имя задачи2";
-        String task2Description = "описание задачи2";
+        Task task1 = manager.createTask("имя задачи1", "описание задачи1",
+                now.plusHours(1), 30);
+        Task task2 = manager.createTask("имя задачи2", "описание задачи2",
+                now.plusMinutes(2), 15);
 
-        Task task1 = manager.createTask(task1Name, task1Description);
-        Task task2 = manager.createTask(task2Name, task2Description);
+        System.out.println("\n");
+        System.out.println("Задачи добавляются в список по времени старта:");
+        System.out.println(manager.getPrioritizedTasks());
 
-        String epic1Name = "Переезд";
-        String epic1Description = "мы справимся!";
-        String epic2Name = "Сдать фз6";
-        String epic2Description = "отправить ревьюеру";
 
-        Epic epic1 = manager.createEpic(epic1Name, epic1Description);
-        Epic epic2 = manager.createEpic(epic2Name, epic2Description);
+        Epic epic1 = manager.createEpic("Переезд", "мы справимся!", now.plusMinutes(5), 10);
+        Epic epic2 = manager.createEpic("Сдать фз7", "отправить ревьюеру",
+                now.plusMinutes(30), 20);
 
-        String subtask11Name = "Собрать коробки";
-        String subtask11Description = "на балконе тоже";
-        String subtask12Name = "Упаковать кошку";
-        String subtask12Description = "спрячется под кровать";
-        String subtask13Name = "Проверить квартиру";
-        String subtask13Description = "выключить электричество и перекрыть воду";
-        String subtask21Name = "Тесты в main";
-        String subtask21Description = "заполнить файл информацией";
-
-        Subtask subtask11 = manager.createSubtask(subtask11Name, subtask11Description, epic1.getId());
-        Subtask subtask12 = manager.createSubtask(subtask12Name, subtask12Description, epic1.getId());
-        Subtask subtask13 = manager.createSubtask(subtask13Name, subtask13Description, epic1.getId());
-        Subtask subtask21 = manager.createSubtask(subtask21Name, subtask21Description, epic2.getId());
+        Subtask subtask11 = manager.createSubtask("Собрать коробки", "на балконе тоже",
+                now.plusHours(2), 55, epic1.getId());
+        Subtask subtask12 = manager.createSubtask("Упаковать кошку", "спрячется под кровать",
+                now.plusHours(3),20, epic1.getId());
+        Subtask subtask13 = manager.createSubtask("Проверить квартиру", "выключить электричество и воду",
+                now.plusHours(3).plusMinutes(30), 15, epic1.getId());
+        Subtask subtask21 = manager.createSubtask("Тесты в main", "заполнить файл информацией",
+                now.plusMinutes(40), 15, epic2.getId());
 
         System.out.println("\n");
         System.out.println("задачи: " + manager.getAllTasks());
@@ -62,8 +58,8 @@ public class Main {
         System.out.println("\n");
 
         manager.getSubtaskById(subtask11.getId());
-        manager.updateSubtask(Status.DONE, subtask21.getId());
-        manager.updateSubtask(Status.DONE, subtask11.getId());
+        manager.updateSubtaskStatus(Status.DONE, subtask21.getId());
+        manager.updateSubtaskStatus(Status.DONE, subtask11.getId());
         manager.getSubtaskById(subtask21.getId());
         manager.getEpicById(epic2.getId());
 
@@ -71,6 +67,10 @@ public class Main {
         manager.getHistoryManager().getHistory().forEach(x -> System.out.println(x.toString()));
         System.out.println("\n");
         System.out.println("последний id: " + manager.getTaskCounter());
+        System.out.println("\n");
+
+        System.out.println("Список проверенных по времени старта задач - 2,8,1,5,6,7:");
+        System.out.println(manager.getPrioritizedTasks());
         System.out.println("\n");
 
         System.out.println("---здесь восстанавливаем из файла---");
@@ -86,5 +86,9 @@ public class Main {
         System.out.println("\n");
 
         System.out.println("последний id после: " + newManager.getTaskCounter());
+
+        System.out.println("\n");
+        System.out.println("Список проверенных по времени старта задач после восстановления - 2,8,1,5,6,7:");
+        System.out.println(manager.getPrioritizedTasks());
     }
 }

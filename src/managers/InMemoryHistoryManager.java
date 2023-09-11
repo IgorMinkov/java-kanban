@@ -26,7 +26,9 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public void remove(int id) {
+    public void remove(Integer id) {
+        if (!nodePointer.containsKey(id))
+            return;
         removeNode(nodePointer.get(id));
     }
 

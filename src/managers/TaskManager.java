@@ -5,6 +5,7 @@ import model.Subtask;
 import model.Task;
 import model.Status;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TaskManager {
@@ -13,41 +14,53 @@ public interface TaskManager {
 
     void deleteAllTasks();
 
-    Task getTaskById(int id);
+    Task getTaskById(Integer id);
 
     Task createTask(String name, String description);
 
-    Task updateTask(Status status, Integer id);
+    Task createTask(String name, String description, LocalDateTime startTime, Integer duration);
 
-    Task updateTask(String name, String description, Integer id);
+    void updateTask(Task task);
 
-    void deleteTaskById(int id);
+    Task updateTaskStatus(Status status, Integer id);
+
+    Task renameTask(String name, String description, Integer id);
+
+    void deleteTaskById(Integer id);
 
     List<Epic> getAllEpics();
 
     void deleteAllEpics();
 
-    Epic getEpicById(int id);
+    Epic getEpicById(Integer id);
 
     Epic createEpic(String name, String description);
 
-    Epic updateEpic(String name, String description, Integer id);
+    Epic createEpic(String name, String description, LocalDateTime startTime, Integer duration);
 
-    void deleteEpicById(int id);
+    void updateEpic(Epic epic);
+
+    Epic renameEpic(String name, String description, Integer id);
+
+    void deleteEpicById(Integer id);
 
     List<Subtask> getAllSubtask();
 
     void deleteAllSubtask();
 
-    Subtask getSubtaskById(int id);
+    Subtask getSubtaskById(Integer id);
 
     Subtask createSubtask(String name, String description, Integer epicId);
 
-    Subtask updateSubtask(Status status, Integer id);
+    Subtask createSubtask(String name, String description, LocalDateTime startTime, Integer duration, Integer epicId);
 
-    Subtask updateSubtask(String name, String description, Integer id);
+    void updateSubtask(Subtask subtask);
 
-    void deleteSubtaskById(int id);
+    Subtask updateSubtaskStatus(Status status, Integer id);
+
+    Subtask RenameSubtask(String name, String description, Integer id);
+
+    void deleteSubtaskById(Integer id);
 
     HistoryManager getHistoryManager();
 
