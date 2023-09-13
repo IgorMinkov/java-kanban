@@ -63,7 +63,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertNotNull(savedTask);
         assertEquals(task, savedTask);
 
-        final Task wrongIdTask = taskManager.getTaskById(999);
+        final Task wrongIdTask = taskManager.getTaskById(-1);
         assertNull(wrongIdTask);
 
         final Task nullTask = taskManager.getTaskById(null);
@@ -77,9 +77,19 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertNotNull(task.getStatus());
         assertEquals(Status.NEW, task.getStatus());
 
+        assertTrue(taskManager.getPrioritizedTasks().contains(task));
+
         final List<Task> tasks = taskManager.getAllTasks();
         assertNotNull(tasks);
         assertTrue(tasks.contains(task));
+
+        Task taskTwo = taskManager.createTask("", "описание",
+                time.plusMinutes(11), 11);
+        assertNull(taskTwo, "создалась задача с пустым именем");
+
+        Task taskThree = taskManager.createTask(null, "описание",
+                time.plusMinutes(11) );
+        assertNull(taskThree, "создалась задача с null-именем");
     }
 
     @Test
@@ -90,6 +100,31 @@ abstract class TaskManagerTest<T extends TaskManager> {
         final Task updatedTask = taskManager.getTaskById(task.getId());
         assertEquals(Status.DONE, updatedTask.getStatus());
         assertEquals(task.getId(), updatedTask.getId());
+
+        assertTrue(taskManager.getPrioritizedTasks().contains(task));
+    }
+
+    @Test
+    void updateTaskStatus() {
+        Task task = addTask();
+        final Task updatedTask = taskManager.updateTaskStatus(Status.IN_PROGRESS, task.getId());
+        assertEquals(task.getId(), updatedTask.getId(), "ошибка обновления статуса задачи");
+
+        final Task nullTask = taskManager.updateTaskStatus(Status.DONE, null);
+        assertNull(nullTask);
+    }
+
+    @Test
+    void renameTask() {
+        Task task = addTask();
+        final Task nullTask = taskManager.renameTask("имя", "описание", null);
+        assertNull(nullTask);
+
+        final Task blankTask = taskManager.renameTask("", "", task.getId());
+        assertNull(blankTask);
+
+        final Task renamedTask = taskManager.renameTask("Новое имя", "", task.getId());
+        assertEquals(task.getId(), renamedTask.getId(), "ошибка переименования задачи");
     }
 
     @Test
@@ -126,7 +161,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertNotNull(savedEpic);
         assertEquals(epic,savedEpic);
 
-        final Epic wrongIdEpic = taskManager.getEpicById(999);
+        final Epic wrongIdEpic = taskManager.getEpicById(-1);
         assertNull(wrongIdEpic);
 
         final Epic nullEpic = taskManager.getEpicById(null);
@@ -144,6 +179,14 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertNotNull(epics);
         assertTrue(epics.contains(epic));
         assertTrue(epic.getSubtaskIdList().isEmpty());
+
+        Epic epicTwo = taskManager.createEpic("", "описание",
+                time.plusMinutes(11), 11);
+        assertNull(epicTwo, "создался эпик с пустым именем");
+
+        Epic epicThree = taskManager.createEpic(null, "описание",
+                time.plusMinutes(11) );
+        assertNull(epicThree, "создался эпик с null-именем");
     }
 
     @Test
@@ -154,6 +197,19 @@ abstract class TaskManagerTest<T extends TaskManager> {
         final Task updatedEpic = taskManager.getEpicById(epic.getId());
         assertEquals("Новое имя эпика", updatedEpic.getName());
         assertEquals(epic.getId(), updatedEpic.getId());
+    }
+
+    @Test
+    void renameEpic() {
+        Epic epic = addEpic();
+        final Epic nullEpic = taskManager.renameEpic("имя", "описание", null);
+        assertNull(nullEpic);
+
+        final Epic blankEpic = taskManager.renameEpic("", "", epic.getId());
+        assertNull(blankEpic);
+
+        final Epic renamedEpic = taskManager.renameEpic("Новое имя", "", epic.getId());
+        assertEquals(epic.getId(), renamedEpic.getId(), "ошибка переименования эпика");
     }
 
     @Test
@@ -198,7 +254,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertNotNull(savedSubtask);
         assertEquals(subtask,savedSubtask);
 
-        final Subtask wrongIdSubtask = taskManager.getSubtaskById(999);
+        final Subtask wrongIdSubtask = taskManager.getSubtaskById(-1);
         assertNull(wrongIdSubtask);
 
         final Subtask nullSubtask = taskManager.getSubtaskById(null);
@@ -214,10 +270,20 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(Status.NEW, subtask.getStatus());
         assertEquals(epic.getId(), subtask.getEpicId());
 
+        assertSame(epic.getStartTime(), subtask.getStartTime());
+
         List<Subtask> subtasks = taskManager.getAllSubtask();
         assertNotNull(subtasks);
         assertTrue(subtasks.contains(subtask));
         assertTrue(epic.getSubtaskIdList().contains(subtask.getId()));
+
+        Subtask subtaskTwo = taskManager.createSubtask("", "описание",
+                time.plusMinutes(11), epic.getId());
+        assertNull(subtaskTwo, "создалась подзадача с пустым именем");
+
+        Subtask subtaskThree = taskManager.createSubtask(null, "описание",
+                time.plusMinutes(11), epic.getId());
+        assertNull(subtaskThree, "создалась подзадача с null-именем");
     }
 
     @Test
@@ -233,6 +299,21 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
+    void renameSubtask() {
+        Epic epic = addEpic();
+        Subtask subtask = addSubtask(epic);
+        final Subtask nullSubtask = taskManager.renameSubtask("имя", "описание", null);
+        assertNull(nullSubtask);
+
+        final Subtask blankSubtask = taskManager.renameSubtask("", "", subtask.getId());
+        assertNull(blankSubtask);
+
+        final Subtask renamedSubtask = taskManager.renameSubtask("Новое имя",
+                "", subtask.getId());
+        assertEquals(subtask.getId(), renamedSubtask.getId(), "ошибка переименования задачи");
+    }
+
+    @Test
     void deleteSubtaskById() {
         Epic epic = addEpic();
         Subtask subtask = addSubtask(epic);
@@ -240,5 +321,11 @@ abstract class TaskManagerTest<T extends TaskManager> {
         final List<Subtask> subtasks = taskManager.getAllSubtask();
         assertFalse(subtasks.contains(subtask));
         assertFalse(epic.getSubtaskIdList().contains(subtask.getId()));
+    }
+
+    @Test
+    void getPrioritizedTasks() {
+        final List<Task> tasks = taskManager.getPrioritizedTasks();
+        assertNotNull(tasks);
     }
 }

@@ -8,13 +8,8 @@ public class Epic extends Task {
     private final ArrayList<Integer> subtaskIdList;
     private LocalDateTime endTime;
 
-    public Epic(String name, String description) {
-        super(name, description);
-        this.subtaskIdList = new ArrayList<>();
-    }
-
-    public Epic(String name, String description, Status status) {
-        super(name, description, status);
+    public Epic(String name, String description, LocalDateTime startTime) {
+        super(name, description, startTime);
         this.subtaskIdList = new ArrayList<>();
     }
 
@@ -51,9 +46,9 @@ public class Epic extends Task {
                 ", subtaskIdList=" + subtaskIdList +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", startTime=" + startTime.format(formatter) +
+                ", startTime=" + startTime.format(FORMATTER) +
                 ", duration=" + duration +
-                ", endTime=" + endTime.format(formatter) +
+                ", endTime=" + endTime.format(FORMATTER) +
                 ", status=" + status +
                 '}';
     }

@@ -1,15 +1,11 @@
-import exceptions.ManagerTimeValidateException;
 import managers.InMemoryTaskManager;
 
 import model.Epic;
 import model.Status;
 import model.Subtask;
 
-import model.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -52,40 +48,34 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     }
 
     @Test
-    void updateEpicStatus() {
+    void updateEpicStatusTest() {
         assertEquals(Status.NEW,epic1.getStatus(), "некорректный статус созданного эпика");
 
-        subtask11.setStatus(Status.IN_PROGRESS);
-        taskManager.updateEpicStatus(epic1.getId());
+        taskManager.updateSubtaskStatus(Status.IN_PROGRESS, subtask11.getId());
         assertEquals(Status.IN_PROGRESS,epic1.getStatus(), "некорректный статус эпика" +
                 "при подзадаче IN_PROGRESS");
 
-        subtask11.setStatus(Status.DONE);
-        taskManager.updateEpicStatus(epic1.getId());
+        taskManager.updateSubtaskStatus(Status.DONE, subtask11.getId());
         assertEquals(Status.IN_PROGRESS,epic1.getStatus(), "некорректный статус эпика" +
                 "при подзадаче DONE");
 
-        subtask12.setStatus(Status.DONE);
-        subtask13.setStatus(Status.DONE);
-        taskManager.updateEpicStatus(epic1.getId());
+        taskManager.updateSubtaskStatus(Status.DONE, subtask12.getId());
+        taskManager.updateSubtaskStatus(Status.DONE, subtask13.getId());
         assertEquals(Status.DONE,epic1.getStatus(), "некорректный статус эпика" +
                 "при всех подзадачах DONE");
 
-        subtask21.setStatus(Status.DONE);
-        taskManager.updateEpicStatus(epic2.getId());
+        taskManager.updateSubtaskStatus(Status.DONE, subtask21.getId());
         assertEquals(Status.IN_PROGRESS,epic2.getStatus());
 
         taskManager.deleteSubtaskById(subtask22.getId());
-        taskManager.updateEpicStatus(epic2.getId());
         assertEquals(Status.DONE,epic2.getStatus(), "статус не пересчитывается при удалении задач");
 
         taskManager.deleteSubtaskById(subtask21.getId());
-        taskManager.updateEpicStatus(epic2.getId());
         assertEquals(Status.NEW,epic2.getStatus(), "не пересчитывается статус при пустом списке подзадач");
     }
 
     @Test
-    void calculateEpicTime() {
+    void calculateEpicTimeTest() {
         assertEquals(time.plusMinutes(4), epic3.getStartTime(),
                 "ошибка расчета времени начала эпика без подзадач");
         assertEquals(20, epic3.getDuration(),
@@ -102,37 +92,4 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
                 "время окончания эпика не равно времени окончания самой поздней его подзадачи");
     }
 
-    @Test
-    void getPrioritizedTasks() {
-        final List<Task> tasks = taskManager.getPrioritizedTasks();
-        assertNotNull(tasks);
-    }
-
-    @Test
-    void addPrioritizeTask() {
-        Task testTask1 = addTask();
-        taskManager.addPrioritizeTask(testTask1);
-        Task testTask2 = addTask();
-        final List<Task> oneTestTask = taskManager.getPrioritizedTasks();
-        assertTrue(oneTestTask.contains(testTask1));
-
-        testTask2.setStartTime(time.plusHours(7));
-        taskManager.addPrioritizeTask(testTask2);
-        final List<Task> bothTestTasks = taskManager.getPrioritizedTasks();
-        assertTrue(bothTestTasks.contains(testTask2));
-    }
-
-    @Test
-    void validateTask() {
-        Task testTask1 = addTask();
-        taskManager.addPrioritizeTask(testTask1);
-        Task testTask2 = addTask();
-        testTask2.setStartTime(time.plusMinutes(10));
-        final ManagerTimeValidateException exception = assertThrows(ManagerTimeValidateException.class,
-                () -> taskManager.validateTask(testTask2));
-        assertEquals("Задача id " + testTask2.getId() + " " + testTask2.getName()
-                        + " пересекается с задачей id" + testTask1.getId() + " " + testTask1.getName(),
-                exception.getMessage(),
-                "ошбика - успешная валидация одинаковых задач");
-    }
 }

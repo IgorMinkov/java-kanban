@@ -45,15 +45,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         idStorage.add(task.getId());
                         switch (task.getType()) {
                             case TASK:
-                                manager.taskStorage.put(task.getId(), task);
+                                manager.updateTask(task);
                                 break;
                             case EPIC:
-                                manager.epicStorage.put(task.getId(), (Epic) task);
+                                manager.updateEpic((Epic) task);
                                 break;
                             case SUBTASK:
-                                manager.subtaskStorage.put(task.getId(), (Subtask) task);
                                 manager.getEpicById(((Subtask) task).getEpicId())
                                         .getSubtaskIdList().add(task.getId());
+                                manager.updateSubtask((Subtask) task);
                                 break;
                             default:
                                 System.out.println("Не распознан тип задачи при чтении из файла");
@@ -79,9 +79,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                                 System.out.println("не найдена задача с таким id");
                             }
                         }
-                    }
-                    for (Epic epic : manager.getAllEpics()){
-                        manager.calculateEpicTime(epic.getId());
                     }
                     ++i;
                 }
@@ -140,8 +137,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Task createTask(String name, String description) {
-        Task task = super.createTask(name, description);
+    public Task createTask(String name, String description, LocalDateTime startTime) {
+        Task task = super.createTask(name, description, startTime);
         save();
         return task;
     }
@@ -198,8 +195,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Epic createEpic(String name, String description) {
-        Epic epic = super.createEpic(name, description);
+    public Epic createEpic(String name, String description, LocalDateTime startTime) {
+        Epic epic = super.createEpic(name, description, startTime);
         save();
         return epic;
     }
@@ -249,8 +246,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Subtask createSubtask(String name, String description, Integer epicId) {
-        Subtask subtask = super.createSubtask(name, description, epicId);
+    public Subtask createSubtask(String name, String description, LocalDateTime startTime, Integer epicId) {
+        Subtask subtask = super.createSubtask(name, description, startTime, epicId);
         save();
         return subtask;
     }
@@ -277,8 +274,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Subtask RenameSubtask(String name, String description, Integer id) {
-        Subtask modifiedSubtask = super.RenameSubtask(name, description, id);
+    public Subtask renameSubtask(String name, String description, Integer id) {
+        Subtask modifiedSubtask = super.renameSubtask(name, description, id);
         save();
         return modifiedSubtask;
     }
@@ -295,28 +292,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateEpicStatus(Integer epicId) {
-        super.updateEpicStatus(epicId);
-    }
-
-    @Override
-    public void calculateEpicTime(Integer epicId) {
-        super.calculateEpicTime(epicId);
-    }
-
-    @Override
-    public List<Task> getPrioritizedTasks() { // где храним и храним ли где-то?
+    public List<Task> getPrioritizedTasks() {
         return super.getPrioritizedTasks();
-    }
-
-    @Override
-    public void addPrioritizeTask(Task task) {
-        super.addPrioritizeTask(task);
-    }
-
-    @Override
-    public void validateTask(Task task) {
-        super.validateTask(task);
     }
 
 }

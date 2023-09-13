@@ -17,10 +17,11 @@ class CSVFileOperatorTest {
 
     private Task task1;
     private Task task2;
+    private LocalDateTime time;
 
     @BeforeEach
     void setUp() {
-        LocalDateTime time = LocalDateTime.of(2000, 1, 1, 1, 1);
+        time = LocalDateTime.of(2000, 1, 1, 1, 1);
         task1 = new Task("имя задачи1", "описание задачи1", Status.NEW,
                 time, 30);
         task1.setId(1);
@@ -39,10 +40,10 @@ class CSVFileOperatorTest {
         final String line2 = CSVFileOperator.toString(null);
         assertNull(line2, "не пройден тест на входящий null в методе ToString");
 
-        final Task task3 = new Task("имя задачи3", "описание задачи3");
+        final Task task3 = new Task("имя задачи3", "описание задачи3", time);
         task3.setId(3);
         final String line3 = CSVFileOperator.toString(task3);
-        assertEquals("3,TASK,имя задачи3,NEW,описание задачи3,01.01.2033 12:00,0", line3,
+        assertEquals("3,TASK,имя задачи3,NEW,описание задачи3,01.01.2000 01:01,0", line3,
                 "ошибка в методе ToString при работе с устаревшим конструктором задачи");
     }
 

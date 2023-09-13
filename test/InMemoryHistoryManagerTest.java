@@ -2,6 +2,7 @@ import managers.HistoryManager;
 import managers.Managers;
 import model.Task;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,11 +22,12 @@ class InMemoryHistoryManagerTest {
     @BeforeEach
     void setUp() {
         historyManager = Managers.getDefaultHistory();
-        task1 = new Task("имя задачи1", "описание задачи1");
+        LocalDateTime time = LocalDateTime.of(2000, 1, 1, 12, 0);
+        task1 = new Task("имя задачи1", "описание задачи1", time);
         task1.setId(1);
-        task2 = new Task("имя задачи2", "описание задачи2");
+        task2 = new Task("имя задачи2", "описание задачи2", time);
         task2.setId(2);
-        task3 = new Task("имя задачи3", "описание задачи3");
+        task3 = new Task("имя задачи3", "описание задачи3", time);
         task3.setId(3);
         task4 = null;
     }

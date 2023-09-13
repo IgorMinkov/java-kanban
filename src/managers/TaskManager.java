@@ -16,7 +16,7 @@ public interface TaskManager {
 
     Task getTaskById(Integer id);
 
-    Task createTask(String name, String description);
+    Task createTask(String name, String description, LocalDateTime startTime);
 
     Task createTask(String name, String description, LocalDateTime startTime, Integer duration);
 
@@ -34,7 +34,7 @@ public interface TaskManager {
 
     Epic getEpicById(Integer id);
 
-    Epic createEpic(String name, String description);
+    Epic createEpic(String name, String description, LocalDateTime startTime);
 
     Epic createEpic(String name, String description, LocalDateTime startTime, Integer duration);
 
@@ -50,18 +50,21 @@ public interface TaskManager {
 
     Subtask getSubtaskById(Integer id);
 
-    Subtask createSubtask(String name, String description, Integer epicId);
+    Subtask createSubtask(String name, String description, LocalDateTime startTime, Integer epicId);
 
-    Subtask createSubtask(String name, String description, LocalDateTime startTime, Integer duration, Integer epicId);
+    Subtask createSubtask(String name, String description, LocalDateTime startTime,
+                          Integer duration, Integer epicId);
 
     void updateSubtask(Subtask subtask);
 
     Subtask updateSubtaskStatus(Status status, Integer id);
 
-    Subtask RenameSubtask(String name, String description, Integer id);
+    Subtask renameSubtask(String name, String description, Integer id);
 
     void deleteSubtaskById(Integer id);
 
     HistoryManager getHistoryManager();
+
+    List<Task> getPrioritizedTasks();
 
 }
