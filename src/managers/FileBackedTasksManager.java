@@ -89,7 +89,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return manager;
     }
 
-    private Integer findMax(List<Integer> list) {
+    protected Integer findMax(List<Integer> list) {
         int max = 0;
         for (Integer value : list) {
             if (value > max) {

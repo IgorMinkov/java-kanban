@@ -372,7 +372,7 @@ public class InMemoryTaskManager implements TaskManager {
         return new ArrayList<>(prioritizedTask);
     }
 
-    private void updateEpicStatus(Integer epicId) {
+    protected void updateEpicStatus(Integer epicId) {
         if (!epicStorage.containsKey(epicId)) {
             System.out.println("нет эпика с таким id: " + epicId);
             return;
@@ -399,7 +399,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    private void calculateEpicTime(Integer epicId) {
+    protected void calculateEpicTime(Integer epicId) {
         if (!epicStorage.containsKey(epicId)) {
             System.out.println("нет эпика с таким id: " + epicId);
             return;
@@ -436,7 +436,7 @@ public class InMemoryTaskManager implements TaskManager {
         epic.setEndTime(endTime);
     }
 
-    private void addPrioritizeTask(Task task) {
+    protected void addPrioritizeTask(Task task) {
         if (task == null) {
             System.out.println("в метод addPrioritizeTask подан null");
             return;

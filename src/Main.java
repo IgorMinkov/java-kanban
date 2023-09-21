@@ -1,21 +1,29 @@
-import managers.FileBackedTasksManager;
+import Server.KVServer;
+import managers.HttpTaskManager;
 import model.Epic;
 import model.Status;
 import model.Subtask;
 import model.Task;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
+
+import static Server.HttpTaskServer.PORT;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         File file = new File("./resources/BackupFile.csv");
+        String url = "http://localhost:" + PORT + "/";
 
         LocalDateTime now = LocalDateTime.now();
 
-        FileBackedTasksManager manager = new FileBackedTasksManager(file);
+        KVServer server = new KVServer();
+        server.start();
+
+        HttpTaskManager manager = new HttpTaskManager(file, url);
 
         Task task1 = manager.createTask("имя задачи1", "описание задачи1",
                 now.plusHours(1), 30);
@@ -73,8 +81,9 @@ public class Main {
         System.out.println(manager.getPrioritizedTasks());
         System.out.println("\n");
 
-        System.out.println("---здесь восстанавливаем из файла---");
-        FileBackedTasksManager newManager = FileBackedTasksManager.loadFromFile(file);
+        System.out.println("---здесь восстанавливаем с сервера---");
+        HttpTaskManager newManager = new HttpTaskManager(file, url);
+        newManager.loadFromServer(newManager);
 
         System.out.println("задачи после: " + newManager.getAllTasks());
         System.out.println("эпики после: " + newManager.getAllEpics());
@@ -89,6 +98,7 @@ public class Main {
 
         System.out.println("\n");
         System.out.println("Список проверенных по времени старта задач после восстановления - 2,8,1,5,6,7:");
-        System.out.println(manager.getPrioritizedTasks());
+        System.out.println(newManager.getPrioritizedTasks());
     }
+
 }

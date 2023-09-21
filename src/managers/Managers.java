@@ -1,9 +1,15 @@
 package managers;
 
+import java.io.File;
+
+import static Server.HttpTaskServer.PORT;
+
 public final class Managers {
 
     public static TaskManager getDefault() {
-        return new InMemoryTaskManager();
+        File file = new File("./resources/BackupFile.csv");
+        String url = "http://localhost:" + PORT + "/";
+        return new HttpTaskManager(file, url);
     }
 
     public static HistoryManager getDefaultHistory() {
