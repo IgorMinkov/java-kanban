@@ -1,4 +1,4 @@
-package Server;
+package server;
 
 public enum Endpoint {
     GET_TASK,

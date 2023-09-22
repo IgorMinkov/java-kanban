@@ -1,4 +1,4 @@
-package Server;
+package server;
 
 import java.io.IOException;
 import java.net.URI;
@@ -86,10 +86,10 @@ public class KVTaskClient {
                 System.out.println("Что-то пошло не так. Сервер вернул код состояния: "
                         + response.statusCode());
             }
-        } catch (NullPointerException | IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             System.out.println("ошибка запроса загрузки: " + e.getMessage());
         }
-        return "";
+        return "load отработал до конца, но данные не выгрузил";
     }
 
 }

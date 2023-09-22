@@ -1,9 +1,8 @@
-package Server;
+package server;
 
 import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
-import managers.Managers;
 import managers.TaskManager;
 import model.Epic;
 import model.Subtask;
@@ -22,21 +21,15 @@ import static model.Task.FORMATTER;
 public class HttpTaskServer {
 
     public static final int PORT = 8080;
+    public static final String TASK_PATH = "task";
+    public static final String EPIC_PATH = "epic";
+    public static final String SUBTASK_PATH = "subtask";
+    public static final String HISTORY_PATH = "history";
+    public static final String PRIORITIZED_PATH = "prioritized";
 
     private final HttpServer httpServer;
     private final TaskManager taskManager;
     private final Gson gson;
-
-    public HttpTaskServer() throws IOException {
-        this.httpServer = HttpServer.create();
-        httpServer.bind(new InetSocketAddress("localhost",PORT), 0);
-        httpServer.createContext("/tasks/", this::taskHandler);
-        this.taskManager = Managers.getDefault();
-        this.gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                .create();
-    }
 
     public HttpTaskServer(TaskManager manager) throws IOException {
         this.httpServer = HttpServer.create();
@@ -56,7 +49,7 @@ public class HttpTaskServer {
             String query = exchange.getRequestURI().getQuery();
 
             Endpoint endpoint = getEndpoint(path, method, query);
-            System.out.println("Processing end-point: /task" + endpoint);
+            System.out.println("Processing end-point: " + endpoint);
 
             switch (endpoint) {
                 case GET_ALL_TASKS: handleGetAllTasks(exchange);
@@ -117,79 +110,99 @@ public class HttpTaskServer {
     private Endpoint getEndpoint(String path, String method, String query) {
         String shorterPath = path.replaceFirst("/tasks", "");
         String[] pathParts = shorterPath.split("/");
+        Endpoint endpoint;
 
         switch (method) {
             case "GET":
-                switch (pathParts[1]) {
-                    case "task":
-                        if (pathParts.length == 2 && query == null) {
-                            return Endpoint.GET_ALL_TASKS;
-                        } else {
-                            return Endpoint.GET_TASK;
-                        }
-                    case "epic":
-                        if (pathParts.length == 2 && query == null) {
-                            return Endpoint.GET_ALL_EPICS;
-                        } else {
-                            return Endpoint.GET_EPIC;
-                        }
-                    case "subtask":
-                        if (pathParts.length == 2 && query == null) {
-                            return Endpoint.GET_ALL_SUBTASKS;
-                        } else if (pathParts.length == 3 && pathParts[2].equals("epic")) {
-                            return Endpoint.GET_EPIC_SUBTASKS;
-                        } else {
-                            return Endpoint.GET_SUBTASK;
-                        }
-                    case "history":
-                        return Endpoint.GET_HISTORY;
-                    case "prioritized":
-                        return Endpoint.GET_PRIORITIZED;
-                }
+                endpoint = getEndpointForGet(pathParts, query);
+                break;
             case "POST":
-                switch (pathParts[1]) {
-                    case "task":
-                        if (pathParts.length == 2 && query == null) {
-                            return Endpoint.POST_TASK;
-                        } else {
-                            return Endpoint.UPDATE_TASK;
-                        }
-                    case "epic":
-                        if (pathParts.length == 2 && query == null) {
-                            return Endpoint.POST_EPIC;
-                        } else {
-                            return Endpoint.UPDATE_EPIC;
-                        }
-                    case "subtask":
-                        if (pathParts.length == 2 && query == null) {
-                            return Endpoint.POST_SUBTASK;
-                        } else {
-                            return Endpoint.UPDATE_SUBTASK;
-                        }
-                }
+                endpoint = getEndpointForPost(pathParts, query);
+                break;
             case "DELETE":
-                switch (pathParts[1]) {
-                    case "task":
-                        if (pathParts.length == 2 && query == null) {
-                            return Endpoint.DELETE_ALL_TASKS;
-                        } else {
-                            return Endpoint.DELETE_TASK;
-                        }
-                    case "epic":
-                        if (pathParts.length == 2 && query == null) {
-                            return Endpoint.DELETE_ALL_EPICS;
-                        } else {
-                            return Endpoint.DELETE_EPIC;
-                        }
-                    case "subtask":
-                        if (pathParts.length == 2 && query == null) {
-                            return Endpoint.DELETE_ALL_SUBTASKS;
-                        } else {
-                            return Endpoint.DELETE_SUBTASK;
-                        }
-                }
-            default: return Endpoint.UNKNOWN_ENDPOINT;
+                endpoint = getEndpointForDelete(pathParts, query);
+                break;
+            default: endpoint = Endpoint.UNKNOWN_ENDPOINT;
         }
+        return endpoint;
+    }
+
+    private Endpoint getEndpointForGet(String[] pathParts, String query) {
+        switch (pathParts[1]) {
+            case TASK_PATH:
+                if (pathParts.length == 2 && query == null) {
+                    return Endpoint.GET_ALL_TASKS;
+                } else {
+                    return Endpoint.GET_TASK;
+                }
+            case EPIC_PATH:
+                if (pathParts.length == 2 && query == null) {
+                    return Endpoint.GET_ALL_EPICS;
+                } else {
+                    return Endpoint.GET_EPIC;
+                }
+            case SUBTASK_PATH:
+                if (pathParts.length == 2 && query == null) {
+                    return Endpoint.GET_ALL_SUBTASKS;
+                } else if (pathParts.length == 3 && pathParts[2].equals(EPIC_PATH)) {
+                    return Endpoint.GET_EPIC_SUBTASKS;
+                } else {
+                    return Endpoint.GET_SUBTASK;
+                }
+            case HISTORY_PATH:
+                return Endpoint.GET_HISTORY;
+            case PRIORITIZED_PATH:
+                return Endpoint.GET_PRIORITIZED;
+        }
+        return Endpoint.UNKNOWN_ENDPOINT;
+    }
+
+    private Endpoint getEndpointForPost(String[] pathParts, String query) {
+        switch (pathParts[1]) {
+            case TASK_PATH:
+                if (pathParts.length == 2 && query == null) {
+                    return Endpoint.POST_TASK;
+                } else {
+                    return Endpoint.UPDATE_TASK;
+                }
+            case EPIC_PATH:
+                if (pathParts.length == 2 && query == null) {
+                    return Endpoint.POST_EPIC;
+                } else {
+                    return Endpoint.UPDATE_EPIC;
+                }
+            case SUBTASK_PATH:
+                if (pathParts.length == 2 && query == null) {
+                    return Endpoint.POST_SUBTASK;
+                } else {
+                    return Endpoint.UPDATE_SUBTASK;
+                }
+        }
+        return Endpoint.UNKNOWN_ENDPOINT;
+    }
+
+    private Endpoint getEndpointForDelete(String[] pathParts, String query) {
+        switch (pathParts[1]) {
+            case TASK_PATH:
+                if (pathParts.length == 2 && query == null) {
+                    return Endpoint.DELETE_ALL_TASKS;
+                } else {
+                    return Endpoint.DELETE_TASK;
+                }
+            case EPIC_PATH:
+                if (pathParts.length == 2 && query == null) {
+                    return Endpoint.DELETE_ALL_EPICS;
+                } else {
+                    return Endpoint.DELETE_EPIC;
+                }
+            case SUBTASK_PATH:
+                if (pathParts.length == 2 && query == null) {
+                    return Endpoint.DELETE_ALL_SUBTASKS;
+                } else {
+                    return Endpoint.DELETE_SUBTASK;
+                }
+        }
+        return Endpoint.UNKNOWN_ENDPOINT;
     }
 
     private void sendResponse(HttpExchange exchange, String response, int status) throws IOException {

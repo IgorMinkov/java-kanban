@@ -1,7 +1,7 @@
 package managers;
 
-import Server.KVTaskClient;
-import Server.LocalDateTimeAdapter;
+import server.KVTaskClient;
+import server.LocalDateTimeAdapter;
 import com.google.gson.*;
 import model.Epic;
 import model.Subtask;
@@ -53,47 +53,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
     public void loadFromServer(HttpTaskManager httpManager) {
         List<Integer> idStorage = new ArrayList<>();
 
-        String loadTasks = taskClient.load(TASKS_KEY);
-        System.out.println("задачи для обработки" + loadTasks);
-        JsonElement jsonTasks = JsonParser.parseString(loadTasks);
-        if (!jsonTasks.isJsonNull()) {
-            JsonArray jsonTasksArray = jsonTasks.getAsJsonArray();
-            for (JsonElement jsonTask : jsonTasksArray) {
-                Task task = gson.fromJson(jsonTask, Task.class);
-                if (task != null) {
-                    idStorage.add(task.getId());
-                    addPrioritizeTask(task);
-                    taskStorage.put(task.getId(), task);
-                }
-            }
-        }
-        String loadEpics = taskClient.load(EPICS_KEY);
-        System.out.println("эпики для обработки" + loadEpics);
-        JsonElement jsonEpics = JsonParser.parseString(loadEpics);
-        if (!jsonEpics.isJsonNull()) {
-            JsonArray jsonEpicsArray = jsonEpics.getAsJsonArray();
-            for (JsonElement jsonEpic : jsonEpicsArray) {
-                Epic epic = gson.fromJson(jsonEpic, Epic.class);
-                if (epic != null) {
-                    idStorage.add(epic.getId());
-                    epicStorage.put(epic.getId(), epic);
-                }
-            }
-        }
-        String loadSubtasks = taskClient.load(SUBTASKS_KEY);
-        System.out.println("сабтаски для обработки" + loadSubtasks);
-        JsonElement jsonSubtasks = JsonParser.parseString(loadSubtasks);
-        if (!jsonSubtasks.isJsonNull()) {
-            JsonArray jsonSubtasksArray = jsonSubtasks.getAsJsonArray();
-            for (JsonElement jsonSubtask : jsonSubtasksArray) {
-                Subtask subtask = gson.fromJson(jsonSubtask, Subtask.class);
-                if (subtask != null) {
-                    idStorage.add(subtask.getId());
-                    addPrioritizeTask(subtask);
-                    subtaskStorage.put(subtask.getId(), subtask);
-                }
-            }
-        }
+        stepOneLoadTasks(idStorage);
+        stepTwoLoadEpics(idStorage);
+        stepThreeLoadSubtasksAfterEpics(idStorage);
         httpManager.taskCounter = httpManager.findMax(idStorage);
 
         JsonElement jsonHistory = JsonParser.parseString(taskClient.load(HISTORY_KEY));
@@ -110,6 +72,56 @@ public class HttpTaskManager extends FileBackedTasksManager {
                     httpManager.historyManager.addTask(httpManager.getSubtaskById(id));
                 } else {
                     System.out.println("для добавления в историю не найдена задача с id " + id);
+                }
+            }
+        }
+    }
+
+    private void stepOneLoadTasks(List<Integer> idStorage) {
+        String loadTasks = taskClient.load(TASKS_KEY);
+        System.out.println("задачи для обработки" + loadTasks);
+        JsonElement jsonTasks = JsonParser.parseString(loadTasks);
+        if (!jsonTasks.isJsonNull()) {
+            JsonArray jsonTasksArray = jsonTasks.getAsJsonArray();
+            for (JsonElement jsonTask : jsonTasksArray) {
+                Task task = gson.fromJson(jsonTask, Task.class);
+                if (task != null) {
+                    idStorage.add(task.getId());
+                    addPrioritizeTask(task);
+                    taskStorage.put(task.getId(), task);
+                }
+            }
+        }
+    }
+
+    private void stepTwoLoadEpics(List<Integer> idStorage) {
+        String loadEpics = taskClient.load(EPICS_KEY);
+        System.out.println("эпики для обработки" + loadEpics);
+        JsonElement jsonEpics = JsonParser.parseString(loadEpics);
+        if (!jsonEpics.isJsonNull()) {
+            JsonArray jsonEpicsArray = jsonEpics.getAsJsonArray();
+            for (JsonElement jsonEpic : jsonEpicsArray) {
+                Epic epic = gson.fromJson(jsonEpic, Epic.class);
+                if (epic != null) {
+                    idStorage.add(epic.getId());
+                    epicStorage.put(epic.getId(), epic);
+                }
+            }
+        }
+    }
+
+    private void stepThreeLoadSubtasksAfterEpics(List<Integer> idStorage) {
+        String loadSubtasks = taskClient.load(SUBTASKS_KEY);
+        System.out.println("сабтаски для обработки" + loadSubtasks);
+        JsonElement jsonSubtasks = JsonParser.parseString(loadSubtasks);
+        if (!jsonSubtasks.isJsonNull()) {
+            JsonArray jsonSubtasksArray = jsonSubtasks.getAsJsonArray();
+            for (JsonElement jsonSubtask : jsonSubtasksArray) {
+                Subtask subtask = gson.fromJson(jsonSubtask, Subtask.class);
+                if (subtask != null) {
+                    idStorage.add(subtask.getId());
+                    addPrioritizeTask(subtask);
+                    subtaskStorage.put(subtask.getId(), subtask);
                 }
             }
         }

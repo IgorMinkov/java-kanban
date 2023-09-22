@@ -1,6 +1,6 @@
-package Server;
+package server;
 
-import static Server.HttpTaskServer.PORT;
+import static server.HttpTaskServer.PORT;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;

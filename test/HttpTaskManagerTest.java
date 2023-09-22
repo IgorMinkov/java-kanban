@@ -1,4 +1,4 @@
-import Server.KVServer;
+import server.KVServer;
 import managers.HttpTaskManager;
 import model.Epic;
 import model.Subtask;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static Server.HttpTaskServer.PORT;
+import static server.HttpTaskServer.PORT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {

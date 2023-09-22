@@ -8,8 +8,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 
 import model.Status;
-import Server.HttpTaskServer;
-import Server.LocalDateTimeAdapter;
+import server.HttpTaskServer;
+import server.LocalDateTimeAdapter;
 import model.Epic;
 import model.Subtask;
 import model.Task;

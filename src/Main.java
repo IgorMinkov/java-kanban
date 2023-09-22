@@ -1,4 +1,4 @@
-import Server.KVServer;
+import server.KVServer;
 import managers.HttpTaskManager;
 import model.Epic;
 import model.Status;
@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-import static Server.HttpTaskServer.PORT;
+import static server.HttpTaskServer.PORT;
 
 public class Main {
 
